@@ -1,5 +1,4 @@
 from typing import Optional
-
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -39,8 +38,20 @@ def read_item_query(skip: int=0, limit: int=0):
 def read_item_params(item_id: int, def_q: str='hello', op_q: Optional[str] = None):
     return {"item_id": item_id, "def_q": def_q, "op_q": op_q}
 
+
+
+from pydantic import BaseModel
+
+class Item(BaseModel):
+    name: str
+    description: Optional[str] = None
+    price: float
+    tax: Optional[float] = None
+
 # Body?!
 
-@app.post("/items")
-def create_item():
-    return
+
+@app.post("/items/")
+async def create_item(item: Item):
+    item.name.
+    return item
