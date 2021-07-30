@@ -27,6 +27,7 @@ class LocalConfig(Config):
 @dataclass
 class ProdConfig(Config):
     PROJ_RELOAD: bool = False
+    DB_URL: str="mysql+pymysql://root:zngsm05051629315^^@localhost:3306/test_fast?charset=utf8"
 
 # print(LocalConfig().DB_ECHO)
 # True 출력
