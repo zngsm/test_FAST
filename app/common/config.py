@@ -5,8 +5,14 @@
 
 from dataclasses import dataclass, asdict
 from os import path, environ
-
+import os, json
 base_dir = path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
+
+secret_file = os.path.join(base_dir, 'secret.json')
+print(secret_file)
+
+with open(secret_file) as f:
+    secrets = json.loads(f.read())
 
 # dataclass 데코레이터 달고 있을 경우 해당 클래스를 dict 형태로 추추해서 쓸 수 있다.
 @dataclass
@@ -27,7 +33,13 @@ class LocalConfig(Config):
 @dataclass
 class ProdConfig(Config):
     PROJ_RELOAD: bool = False
-    DB_URL: str="mysql+pymysql://root:zngsm05051629315^^@localhost:3306/test_fast?charset=utf8"
+    DB_URL: str="mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8"\
+        .format(secrets["DB_USER"],
+                secrets["DB_PW"],
+                secrets["DB_HOST"],
+                secrets["DB_PORT"],
+                secrets["DB_NAME"]
+    )
 
 # print(LocalConfig().DB_ECHO)
 # True 출력
