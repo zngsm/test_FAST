@@ -7,9 +7,8 @@ from dataclasses import dataclass, asdict
 from os import path, environ
 import os, json
 base_dir = path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
-
 secret_file = os.path.join(base_dir, 'secret.json')
-print(secret_file)
+
 
 with open(secret_file) as f:
     secrets = json.loads(f.read())
@@ -29,35 +28,21 @@ class Config:
 @dataclass
 class LocalConfig(Config):
     PROJ_RELOAD: bool = True
-
-@dataclass
-class ProdConfig(Config):
-    PROJ_RELOAD: bool = False
-    DB_URL: str="mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8"\
+    DB_URL: str="mysql+pymysql://{}:{}@{}/{}?charset=utf8"\
         .format(secrets["DB_USER"],
                 secrets["DB_PW"],
                 secrets["DB_HOST"],
-                secrets["DB_PORT"],
                 secrets["DB_NAME"]
     )
+    TRUSTED_HOSTS = ["*"]
+    ALLOW_SITE = ["*"]
 
-# print(LocalConfig().DB_ECHO)
-# True 출력
 
-def abc(DB_ECHO=None, DB_POOL_RECYCLE=None, **kwargs):
-    print(DB_ECHO, DB_POOL_RECYCLE)
+@dataclass
+class ProdConfig(Config):
+    TRUSTED_HOSTS = ["*"]
+    ALLOW_SITE = ["*"]
 
-abc(LocalConfig())
-# LocalConfig(DB_POOL_RECYCLE=900, DB_ECHO=True, PROJ_RELOAD=True) None 출력
-
-print(asdict(LocalConfig()))
-# {'DB_POOL_RECYCLE': 900, 'DB_ECHO': True, 'PROJ_RELOAD': True}
-# 위의 abc를 이용해 출력했을 경우는 객체형태로 출력되지만, asdict로 출력하면 데코레이터를 붙여줬기 때문에 dict 형태로 출력할 수 있다.
-arg = asdict(LocalConfig())
-abc(arg)
-# {'DB_POOL_RECYCLE': 900, 'DB_ECHO': True, 'PROJ_RELOAD': True} None
-abc(**arg)
-# True 900
 
 def conf():
     """
@@ -66,3 +51,21 @@ def conf():
     """
     config = dict(prod=ProdConfig(), local=LocalConfig())
     return config.get(environ.get("API_ENV", "local"))
+
+# print(LocalConfig().DB_ECHO)
+# True 출력
+
+def abc(DB_ECHO=None, DB_POOL_RECYCLE=None, **kwargs):
+    print(DB_ECHO, DB_POOL_RECYCLE)
+
+# abc(LocalConfig())
+# LocalConfig(DB_POOL_RECYCLE=900, DB_ECHO=True, PROJ_RELOAD=True) None 출력
+
+# print(asdict(LocalConfig()))
+# {'DB_POOL_RECYCLE': 900, 'DB_ECHO': True, 'PROJ_RELOAD': True}
+# 위의 abc를 이용해 출력했을 경우는 객체형태로 출력되지만, asdict로 출력하면 데코레이터를 붙여줬기 때문에 dict 형태로 출력할 수 있다.
+# arg = asdict(LocalConfig())
+# abc(arg)
+# {'DB_POOL_RECYCLE': 900, 'DB_ECHO': True, 'PROJ_RELOAD': True} None
+# abc(**arg)
+# True 900

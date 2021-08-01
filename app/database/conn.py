@@ -6,10 +6,11 @@ import logging
 
 class SQLAlchemy:
     def __init__(self, app: FastAPI = None, **kwargs):
-        self.engine = None
-        self.session - None
+        self._engine = None
+        self._session = None
         if app is not None:
             self.init_app(app=app, **kwargs)
+
     def init_app(self, app: FastAPI, **kwargs):
         """
         DB 초기화 함수

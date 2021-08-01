@@ -5,7 +5,7 @@ import uvicorn
 
 from app.database.conn import db
 from app.common.config import conf
-from app.routes import index
+from app.router import index
 
 def create_app():
     """
